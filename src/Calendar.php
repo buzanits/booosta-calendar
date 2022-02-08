@@ -9,7 +9,7 @@ abstract class Calendar extends \booosta\ui\UI
   use moduletrait_calendar;
 
   protected $events;
-  protected $date;
+  protected $startdate, $enddate;
   protected $lang;
 
   public function __construct($name = null, $events = null, $events_url = null)
@@ -20,10 +20,17 @@ abstract class Calendar extends \booosta\ui\UI
     $this->lang = $this->config('language');
   }
 
-  public function add_events($events) { if(is_array($events)) $this->events = array_merge($this->events, $events); }
-  public function set_date($date) { $this->date = date('Y-m-d', strtotime($date)); }
+  public function set_startdate($date) { $this->startdate = date('Y-m-d', strtotime($date)); }
+  public function set_enddate($date) { $this->enddate = date('Y-m-d', strtotime($date)); }
   public function set_lang($lang) { $this->lang = $lang; }
   public function get_lang() { return $this->lang; }
+
+  public function add_events($events) 
+  { 
+    if(!is_array($events)) return false;
+    foreach($events as $event) $this->add_event($event);
+    return true;
+  }
 
   public function add_event($event, $background = false)
   {
@@ -31,7 +38,7 @@ abstract class Calendar extends \booosta\ui\UI
       $this->events[$event->sortkey()] = $event;
     elseif(is_array($event)):
       #\booosta\debug($event);
-      $obj = $this->makeInstance("\\booosta\\fullcalendar\\Event", $event['name'], $event['date']);
+      $obj = $this->makeInstance("\\booosta\\calendar\\Event", $event['name'], $event['startdate']);
       if($event['id']) $obj->set_id($event['id']);
       if($event['enddate']) $obj->set_enddate($event['enddate']);
       if($event['link']) $obj->set_link($event['link']);
@@ -52,13 +59,13 @@ abstract class Calendar extends \booosta\ui\UI
 
 class Event extends \booosta\Base\base
 {
-  protected $id, $name, $date, $enddate, $link, $link_target, $description, $settings;
+  protected $id, $name, $startdate, $enddate, $link, $link_target, $description, $settings;
 
-  public function __construct($name, $date, $link = null, $link_target = null, $description = null)
+  public function __construct($name, $startdate, $link = null, $link_target = null, $description = null)
   {
     parent::__construct();
     $this->name = $name;
-    $this->date = $date;
+    $this->startdate = $startdate;
     $this->link = $link;
     $this->link_target = $link_target;
     $this->description = $description;
@@ -67,7 +74,7 @@ class Event extends \booosta\Base\base
 
   public function get_id() { return $this->id; }
   public function get_name() { return $this->name; }
-  public function get_date() { return $this->date; }
+  public function get_startdate() { return $this->startdate; }
   public function get_enddate() { return $this->enddate; }
   public function get_link() { return $this->link; }
   public function get_link_target() { return $this->link_target; }
@@ -75,7 +82,7 @@ class Event extends \booosta\Base\base
   public function get_event_settings() { return $this->settings; }
   public function set_name($val) { $this->name = $val; }
   public function set_id($val) { $this->id = $val; }
-  public function set_date($val) { $this->date = $val; }
+  public function set_startdate($val) { $this->startdate = $val; }
   public function set_enddate($val) { $this->enddate = $val; }
   public function set_link($val) { $this->link = $val; }
   public function set_link_target($val) { $this->link_target = $val; }
