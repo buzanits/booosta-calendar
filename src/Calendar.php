@@ -41,16 +41,27 @@ abstract class Calendar extends \booosta\ui\UI
       $obj = $this->makeInstance("\\booosta\\calendar\\Event", $event['name'], $event['startdate']);
       if($event['id']) $obj->set_id($event['id']);
       if($event['enddate']) $obj->set_enddate($event['enddate']);
-      if($event['link']) $obj->set_link($event['link']);
-      if($event['link_target']) $obj->set_link_target($event['link_target']);
       if($event['description']) $obj->set_description($event['description']);
       if($event['color']) $obj->set_color($event['color']);
       if($event['readonly']) $obj->set_readonly($event['readonly']);
+
+      if($event['link'] == '1' || $event['link'] === true) $obj->set_link($this->make_link($event['id']));
+      elseif($event['link']) $obj->set_link($event['link']);
+
+      if($event['link_target']) $obj->set_link_target($event['link_target']);
+
       if($background) $obj->set_background(true);
+      if(is_bool($event['background'])) $obj->set_background($event['background']);
+
       if(is_array($event['settings'])) $obj->set_eventsettings($event['settings']);;
 
       $this->events[$obj->sortkey()] = $obj;
     endif;
+  }
+
+  protected function make_link($id)
+  {
+    return "?action=edit&object_id=$id";
   }
 
   public function set_events_url($url) { $this->events_url = $url; }
