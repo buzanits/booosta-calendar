@@ -11,12 +11,13 @@ abstract class Calendar extends \booosta\ui\UI
   protected $events;
   protected $startdate, $enddate;
   protected $lang;
+  protected $id_prefix;
 
   public function __construct($name = null, $events = null, $events_url = null)
   {
     parent::__construct();
     if($events === null) $this->events = []; else $this->events = $events;
-    $this->id = "ui_datepicker_$name";
+    $this->id = "{$this->id_prefix}_$name";
     $this->lang = $this->config('language');
   }
 
@@ -65,6 +66,21 @@ abstract class Calendar extends \booosta\ui\UI
   }
 
   public function set_events_url($url) { $this->events_url = $url; }
+
+  public function load_events($table = 'event', $param = [])
+  {
+    $id_field = $param['id'] ?? 'id';
+    $name_field = $param['name'] ?? 'name';
+    $startdate_field = $param['startdate'] ?? 'startdate';
+    $enddate_field = $param['enddate'] ?? 'enddate';
+
+    $clause = $param['whereclause'] ?? '0=0';
+
+    $sql = "select `$id_field` as id, `$name_field` as name, `$startdate_field` as startdate, `$enddate_field` as enddate
+            from `$table` where $clause";
+    $events = $this->DB->query_arrays($sql);
+    $this->add_events($events);
+  }
 }
 
 
