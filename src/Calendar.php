@@ -10,8 +10,8 @@ abstract class Calendar extends \booosta\ui\UI
 
   protected $events;
   protected $startdate, $enddate;
-  protected $lang;
   protected $id_prefix;
+  protected $baseurl;
 
   public function __construct($name = null, $events = null, $events_url = null)
   {
@@ -25,6 +25,7 @@ abstract class Calendar extends \booosta\ui\UI
   public function set_enddate($date) { $this->enddate = date('Y-m-d', strtotime($date)); }
   public function set_lang($lang) { $this->lang = $lang; }
   public function get_lang() { return $this->lang; }
+  public function set_baseurl($baseurl) { $this->baseurl = $baseurl; }
 
   public function add_events($events) 
   { 
