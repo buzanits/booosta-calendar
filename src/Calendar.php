@@ -47,6 +47,7 @@ abstract class Calendar extends \booosta\ui\UI
       if($event['color']) $obj->set_color($event['color']);
       if($event['readonly']) $obj->set_readonly($event['readonly']);
       if($event['background']) $obj->set_background($event['background']);
+      if($event['allday']) $obj->set_allday($event['allday']);
 
       if($event['link'] == '1' || $event['link'] === true) $obj->set_link($this->make_link($event['id']));
       elseif($event['link']) $obj->set_link($event['link']);
@@ -78,6 +79,7 @@ abstract class Calendar extends \booosta\ui\UI
     $color_field = $param['color'] ?? 'color';
     $background_field = $param['background'] ?? 'background';
     $readonly_field = $param['readonly'] ?? 'readonly';
+    $allday_field = $param['allday'] ?? 'allday';
 
     $clause = $param['whereclause'] ?? '0=0';
 
@@ -93,6 +95,7 @@ abstract class Calendar extends \booosta\ui\UI
       $event['color'] = $row[$color_field];
       $event['background'] = $row[$background_field];
       $event['readonly'] = $row[$readonly_field];
+      $event['allday'] = $row[$allday_field];
 
       $events[] = $event;
     endforeach;
@@ -117,6 +120,7 @@ class Event extends \booosta\Base\base
     $this->color = $color;
     $this->background = $background;
     $this->readonly = $readonly;
+    $this->allday = $allday;
     $this->settings = [];
   }
 
@@ -138,6 +142,7 @@ class Event extends \booosta\Base\base
   public function set_color($val) { $this->color = $val; }
   public function set_background($val) { $this->background = $val; }
   public function set_readonly($val) { $this->readonly = $val; }
+  public function set_allday($val) { $this->allday = $val; }
   public function set_settings($val) { $this->settings = $val; }
 
   public function get_event_setting($key) { return $this->settings[$key]; }
