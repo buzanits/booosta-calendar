@@ -46,6 +46,7 @@ abstract class Calendar extends \booosta\ui\UI
       if($event['description']) $obj->set_description($event['description']);
       if($event['color']) $obj->set_color($event['color']);
       if($event['readonly']) $obj->set_readonly($event['readonly']);
+      if($event['background']) $obj->set_background($event['background']);
 
       if($event['link'] == '1' || $event['link'] === true) $obj->set_link($this->make_link($event['id']));
       elseif($event['link']) $obj->set_link($event['link']);
@@ -74,12 +75,28 @@ abstract class Calendar extends \booosta\ui\UI
     $name_field = $param['name'] ?? 'name';
     $startdate_field = $param['startdate'] ?? 'startdate';
     $enddate_field = $param['enddate'] ?? 'enddate';
+    $color_field = $param['color'] ?? 'color';
+    $background_field = $param['background'] ?? 'background';
+    $readonly_field = $param['readonly'] ?? 'readonly';
 
     $clause = $param['whereclause'] ?? '0=0';
 
-    $sql = "select `$id_field` as id, `$name_field` as name, `$startdate_field` as startdate, `$enddate_field` as enddate
-            from `$table` where $clause";
-    $events = $this->DB->query_arrays($sql);
+    $sql = "select * from `$table` where $clause";
+    $tmp = $this->DB->query_arrays($sql);
+    $events = [];
+
+    foreach($tmp as $row):
+      $event['id'] = $row[$id_field];
+      $event['name'] = $row[$name_field];
+      $event['startdate'] = $row[$startdate_field];
+      $event['enddate'] = $row[$enddate_field];
+      $event['color'] = $row[$color_field];
+      $event['background'] = $row[$background_field];
+      $event['readonly'] = $row[$readonly_field];
+
+      $events[] = $event;
+    endforeach;
+
     $this->add_events($events);
   }
 }
@@ -87,9 +104,9 @@ abstract class Calendar extends \booosta\ui\UI
 
 class Event extends \booosta\Base\base
 {
-  protected $id, $name, $startdate, $enddate, $link, $link_target, $description, $settings;
+  protected $id, $name, $startdate, $enddate, $link, $link_target, $description, $color, $background, $readonly, $settings;
 
-  public function __construct($name, $startdate, $link = null, $link_target = null, $description = null)
+  public function __construct($name, $startdate, $link = null, $link_target = null, $description = null, $color = null, $background = null, $readonly = null)
   {
     parent::__construct();
     $this->name = $name;
@@ -97,6 +114,9 @@ class Event extends \booosta\Base\base
     $this->link = $link;
     $this->link_target = $link_target;
     $this->description = $description;
+    $this->color = $color;
+    $this->background = $background;
+    $this->readonly = $readonly;
     $this->settings = [];
   }
 
@@ -115,6 +135,9 @@ class Event extends \booosta\Base\base
   public function set_link($val) { $this->link = $val; }
   public function set_link_target($val) { $this->link_target = $val; }
   public function set_description($val) { $this->description = $val; }
+  public function set_color($val) { $this->color = $val; }
+  public function set_background($val) { $this->background = $val; }
+  public function set_readonly($val) { $this->readonly = $val; }
   public function set_settings($val) { $this->settings = $val; }
 
   public function get_event_setting($key) { return $this->settings[$key]; }

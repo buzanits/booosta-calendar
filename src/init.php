@@ -34,4 +34,10 @@ trait actions
     \booosta\ajax\Ajax::print_response(null, ['result' => '']);
     $this->no_output = true;
   }
+
+  protected function set_event_dates($duration = 60)
+  {
+    $this->TPL['startdate'] = date('Y-m-d H:i:s', strtotime($this->VAR['startdate']));
+    $this->TPL['enddate'] = date('Y-m-d H:i:s', strtotime($this->VAR['startdate']) + 60 * intval($duration));
+  }
 }
