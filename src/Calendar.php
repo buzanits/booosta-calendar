@@ -15,9 +15,8 @@ abstract class Calendar extends \booosta\ui\UI
 
   public function __construct($name = null, $events = null, $events_url = null)
   {
-    parent::__construct();
+    parent::__construct("{$this->id_prefix}_$name");
     if($events === null) $this->events = []; else $this->events = $events;
-    $this->id = "{$this->id_prefix}_$name";
     $this->lang = $this->config('language');
   }
 
