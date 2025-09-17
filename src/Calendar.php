@@ -8,7 +8,7 @@ abstract class Calendar extends \booosta\ui\UI
 {
   use moduletrait_calendar;
 
-  protected $events;
+  protected $events = [];
   protected $startdate, $enddate;
   protected $id_prefix;
   protected $baseurl;
@@ -16,7 +16,7 @@ abstract class Calendar extends \booosta\ui\UI
   public function __construct($name = null, $events = null, $events_url = null)
   {
     parent::__construct("{$this->id_prefix}_$name");
-    if($events === null) $this->events = []; else $this->events = $events;
+    if($events !== null) $this->add_events($events);
     $this->lang = $this->config('language');
   }
 
